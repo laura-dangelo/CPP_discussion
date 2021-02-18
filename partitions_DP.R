@@ -44,7 +44,9 @@ length(psi_seq)
 
 
 
-plot_partitions = function(row_c0, psi_inf_eq_seq, psi_sup_seq)
+
+
+plot_partitions_DP = function(row_c0, psi_inf_eq_seq, psi_sup_seq)
 {
   if(length(psi_inf_eq_seq)!=length(psi_sup_seq)) return("le sequenze devono avere uguale lunghezza \n")
   
@@ -55,10 +57,12 @@ plot_partitions = function(row_c0, psi_inf_eq_seq, psi_sup_seq)
     res[,i] = tmp/sum(tmp)
   }
   
-  par(mar = c(5, 2, 4, 3) + 0.1)
-  plot(0, xlim = range(psi_inf_eq_seq), ylim = c(0,1), type = "n", axes = F,  xaxs = "i", yaxs = "i", xlab = "", ylab = "")
+  par(mar = c(4, 4.7, 1, 4) + 0.1, xpd = NA)
+  plot(0, xlim = range(psi_inf_eq_seq), ylim = c(0,1), type = "n", axes = F,  
+       xaxs = "i", yaxs = "i", xlab = expression(psi[1]), ylab = "")
   axis(1, tck=-0.01)
   axis(4, tck=-0.01, las = 1)
+  mtext("Cumulative probability", side = 4, line = 3, cex = par("cex.lab"))
   res2 = res
   for(i in 1:length(psi_inf_eq_seq))
   {
@@ -66,9 +70,9 @@ plot_partitions = function(row_c0, psi_inf_eq_seq, psi_sup_seq)
   }
   
   cbind(res2[,1], parts, apply(parts, 1, function(x) length(unique(x))))
-  axis(2, at = res2[,1][c(1,16,41,51)], labels = c("","","",""))
-  axis(2, at = c(0.1,0.42,0.77,0.95,0.999), labels = c("1", "2", "3", "4", "5"), tick = F, las = 1)
-  
+  axis(2, at = res2[,1][c(1,16,41,51)], labels = c("","","",""), tick = F)
+  axis(2, at = c(0.1,0.42,0.77,0.95,0.999), labels = c("1 block", "2 blocks", "3 blocks", "4 blocks", "5 blocks"), 
+       tick = F, las = 1, line = 0.5)
   
   polygon(x = c(psi_inf_eq_seq, rev(psi_inf_eq_seq)),
           y = c( res2[row_c0-1,], rev(res2[row_c0,]) ),
@@ -78,27 +82,19 @@ plot_partitions = function(row_c0, psi_inf_eq_seq, psi_sup_seq)
     lines( smooth.spline(x = psi_inf_eq_seq, y = res2[i,]) )
   }
   box()
-  
+  segments(0, c(0, res2[,1][c(1,16,41,51)], 1), -0.1, c(0, res2[,1][c(1,16,41,51)], 1), lty = 3)
 }
 
 
 
 ### c0 = (1,2) (3,4,5)
 # riga 16
-par(mar = c(5, 2, 4, 3) + 0.1)
-plot_partitions(16, psi_seq, psi_seq)
-
-##### asimmetrico
-plot_partitions(16, psi_seq, psi_seq*2) # penalizzo di più quelle con più clusters
-plot_partitions(16, 2*psi_seq, psi_seq) # penalizzo di più quelle con meno (o uguale??? numero di clusters) 
+plot_partitions_DP(16, psi_seq, psi_seq)
+plot_partitions_DP(16, psi_seq, psi_seq*1.5) # penalizzo di più quelle con più clusters
 
 
 
 ### c0 = (1,2) (3,4) (5)
 # riga 32
-par(mar = c(5, 2, 4, 3) + 0.1)
-plot_partitions(32, psi_seq, psi_seq)
-
-##### asimmetrico
-plot_partitions(32, psi_seq, psi_seq*2) # penalizzo di più quelle con più clusters
-plot_partitions(32, 2*psi_seq, psi_seq) # penalizzo di più quelle con meno (o uguale??? numero di clusters) 
+plot_partitions_DP(32, psi_seq, psi_seq)
+plot_partitions_DP(32, psi_seq, psi_seq*1.5) # penalizzo di più quelle con più clusters
